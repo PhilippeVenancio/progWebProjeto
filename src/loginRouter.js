@@ -5,12 +5,19 @@ const User = require('./models/User')
 
 router.get('/', (req, res)=> {
 
-    User.findOne().then((user) => {
+    const { password, email } = req.query
 
+    console.log(req.query)
+
+    User.findOne({ where: { email } }).then((user) => {
         if (user) {
-            res.status(200).send(`Olá ${user.name}, seu número da sorte é ${user.lucky_number}`)
+            if (password == user.password) {
+                res.status(200).send(`Olá ${user.name}, seu número da sorte é ${user.lucky_number}`)
+            } else {
+                res.status(404).send(`Verifique suas credenciais.`)
+            }
         } else {
-            res.status(404).send("usuário não encontrado. Tente novamente.")
+            res.status(404).send("Usuário não encontrado. Tente novamente.")
         }
     })
 
